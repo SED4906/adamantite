@@ -1,0 +1,12 @@
+[build]
+targets = ["adamantite"]
+deps = ["cargo"]
+
+[target.adamantite]
+result = "target/release/adamantite.exe"
+files = ["Cargo.toml"]
+deps = ["cargo"]
+cmds = ["cargo build --release"]
+
+[depend.cargo]
+runs = ["cargo"]
