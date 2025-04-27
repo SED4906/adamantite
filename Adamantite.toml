@@ -1,12 +1,16 @@
 [build]
-targets = ["adamantite"]
-deps = ["cargo"]
+targets = ["release", "debug"]
+default = "debug"
 
-[target.adamantite]
-result = "target/release/adamantite.exe"
-files = ["Cargo.toml"]
-deps = ["cargo"]
+[runs]
+cargo = "cargo"
+
+[target.release]
+result = "target/release/adamantite"
+files = ["Cargo.toml", "src/main.rs"]
 cmds = ["cargo build --release"]
 
-[depend.cargo]
-runs = ["cargo"]
+[target.debug]
+result = "target/debug/adamantite"
+files = ["Cargo.toml", "src/main.rs"]
+cmds = ["cargo build"]
