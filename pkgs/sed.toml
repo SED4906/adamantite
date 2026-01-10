@@ -1,0 +1,12 @@
+version = "4.9"
+build = """
+tar xf sed-4.9.tar.xz
+cd sed-4.9
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/sed/sed-4.9.tar.xz"
+blake2b = "48fc271da11392cb948989d05f902f0d50d1c85d215934d7a9fa5bc4fe83e110"

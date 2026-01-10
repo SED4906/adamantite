@@ -1,0 +1,12 @@
+version = "9.9"
+build = """
+tar xf coreutils-9.9.tar.xz
+cd coreutils-9.9
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/coreutils/coreutils-9.9.tar.xz"
+blake2b = "8441a3b9f6df0a18f3423cd5e8bfa95eca4baae879d2469424cfce737f21daff"

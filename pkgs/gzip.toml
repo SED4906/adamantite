@@ -1,0 +1,12 @@
+version = "1.14"
+build = """
+tar xf gzip-1.14.tar.xz
+cd gzip-1.14
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/gzip/gzip-1.14.tar.xz"
+blake2b = "e54436896748d6ab95b289e314199b2177877813a35da9a38e3cafcb52d92e08"

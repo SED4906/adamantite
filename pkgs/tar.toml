@@ -1,0 +1,12 @@
+version = "1.35"
+build = """
+tar xf tar-1.35.tar.xz
+cd tar-1.35
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/tar/tar-1.35.tar.xz"
+blake2b = "710e3dc8ecbd0e8c5a95e06fb327a37e3df88f7ba068329998a047f92400b5ad"

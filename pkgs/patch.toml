@@ -1,0 +1,12 @@
+version = "2.8"
+build = """
+tar xf patch-2.8.tar.xz
+cd patch-2.8
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/patch/patch-2.8.tar.xz"
+blake2b = "84f13663fef5cbbc2ccc633ceeffcd71aa6430362c983e181bc052199e31d8f2"

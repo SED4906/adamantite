@@ -1,0 +1,18 @@
+version = "1.0.8"
+build = """
+sed -i 's@\(ln -s -f \)$(PREFIX)/bin/@\1@' Makefile
+sed -i "s@(PREFIX)/man@(PREFIX)/share/man@g" Makefile
+make -f Makefile-libbz2_so
+make
+make DESTDIR=$PACKAGE_OUT PREFIX=/usr install
+cp -av libbz2.so.* $PACKAGE_OUT/usr/lib
+ln -sv libbz2.so.1.0.8 $PACKAGE_OUT/usr/lib/libbz2.so
+cp -v bzip2-shared $PACKAGE_OUT/usr/bin/bzip2
+for i in $PACKAGE_OUT/usr/bin/{bzcat,bunzip2}; do
+  ln -sfv bzip2 $i
+done
+"""
+
+[[distfiles]]
+uri = "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"
+blake2b = "a591978c1385e156109f0743a7651839b00d125ae34a141a45b3038f9c9e7f50"

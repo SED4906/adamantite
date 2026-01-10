@@ -1,0 +1,22 @@
+version = "4.2.1"
+build = """
+tar xf cmake-4.2.1.tar.gz
+cd cmake-4.2.1
+sed -i '/"lib64"/s/64//' Modules/GNUInstallDirs.cmake &&
+./bootstrap --prefix=/usr \
+            --system-libs \
+            --mandir=/share/man \
+            --no-system-jsoncpp \
+            --no-system-cppdap \
+            --no-system-curl \
+            --no-system-libarchive \
+            --no-system-libuv \
+            --no-system-nghttp2 \
+            --no-system-librhash
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://github.com/Kitware/CMake/releases/download/v4.2.1/cmake-4.2.1.tar.gz"
+blake2b = "5519a297c1741398444d1ede0bbd2138370221bf87f2c86e23b310c8f5797103"

@@ -1,0 +1,12 @@
+version = "4.4.1"
+build = """
+tar xf make-4.4.1.tar.gz
+cd make-4.4.1
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/make/make-4.4.1.tar.gz"
+blake2b = "8c4159e5887ef4d5dcb6aa1b1225afe8741699b57b09a56c3ce6d27bd70a7243"

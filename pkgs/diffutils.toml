@@ -1,0 +1,12 @@
+version = "3.12"
+build = """
+tar xf diffutils-3.12.tar.xz
+cd diffutils-3.12
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/diffutils/diffutils-3.12.tar.xz"
+blake2b = "822584d5f26ffcd819f418ffc2dc39c96d168ca221da8813e0f58e0d1726c94b"

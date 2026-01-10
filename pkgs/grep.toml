@@ -1,0 +1,13 @@
+version = "3.12"
+build = """
+tar xf grep-3.12.tar.xz
+cd grep-3.12
+sed -i "s/echo/#echo/" src/egrep.sh
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/grep/grep-3.12.tar.xz"
+blake2b = "5cad27d68611bcbda9bed0535570c2bb2e1cf9618a6e016b3af5aa20cfabdaa7"

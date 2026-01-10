@@ -1,0 +1,12 @@
+version = "3.01"
+build = """
+tar xf nasm-3.01.tar.xz
+cd nasm-3.01
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://www.nasm.us/pub/nasm/releasebuilds/3.01/nasm-3.01.tar.xz"
+blake2b = "a7afbfe230075332cfcf0c6ca65b8e74d4d7b9462b04ce50aadc83d8274a3b3c"

@@ -1,0 +1,12 @@
+version = "4.10.0"
+build = """
+tar xf findutils-4.10.0.tar.xz
+cd findutils-4.10.0
+./configure --prefix=/usr --localstatedir=/var/lib/locate
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/findutils/findutils-4.10.0.tar.xz"
+blake2b = "ca8be77ffe294d62403be5061edac5a129e1ca6c740614bbfd1a3fceae2642e2"

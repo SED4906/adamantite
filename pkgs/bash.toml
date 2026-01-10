@@ -1,0 +1,49 @@
+version = "5.3.9"
+build = """
+tar xf bash-5.3.tar.gz
+cd bash-5.3
+for P in `seq 1 9`; do patch -p0 <../bash53-00$P; done
+./configure --prefix=/usr --without-bash-malloc
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/bash/bash-5.3.tar.gz"
+blake2b = "38bc42a6abd607a63f7d208b7f10a433"
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/bash/bash-5.3-patches/bash53-001"
+blake2b = "b29f99a8d03449727161182c77a478c3"
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/bash/bash-5.3-patches/bash53-002"
+blake2b = "2833bb8051dbf011dba8ccf28c710d42"
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/bash/bash-5.3-patches/bash53-003"
+blake2b = "719fcec3bc1fed97165f387acaaeb831"
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/bash/bash-5.3-patches/bash53-004"
+blake2b = "a62c86e31b727ca6957a5bf3f4cec4ba"
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/bash/bash-5.3-patches/bash53-005"
+blake2b = "c718d9a0f93804947891ea9d7a2dd479"
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/bash/bash-5.3-patches/bash53-006"
+blake2b = "486a484fc0a8996e5ef2d815393d563e"
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/bash/bash-5.3-patches/bash53-007"
+blake2b = "eb450bd49d0fc83db0e414e14258def3"
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/bash/bash-5.3-patches/bash53-008"
+blake2b = "998a7c5dbb49f2a25664ce5a3bf117bd"
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/bash/bash-5.3-patches/bash53-009"
+blake2b = "cfe8ef91c0b217469dc6ade58a8b043c"

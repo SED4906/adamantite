@@ -1,0 +1,12 @@
+version = "5.8.2"
+build = """
+tar xf xz-5.8.2.tar.xz
+cd xz-5.8.2
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://github.com/tukaani-project/xz/releases/download/v5.8.2/xz-5.8.2.tar.xz"
+blake2b = "6db254aa66f5903e2b65bdfc84c825b706560f38197998abe7bcf8b1b8b900a6"
