@@ -7,7 +7,7 @@ use blake2::{
 
 use crate::Distfile;
 
-pub fn distfetch(distfile: Distfile, distdir: &str) {
+pub fn distfetch(distfile: &Distfile, distdir: &str) {
     print!("distfile {}", distfile.uri);
     let name = distfile.name.clone().unwrap_or_else(|| {
         Url::parse(&distfile.uri).expect("couldn't parse uri")
@@ -28,7 +28,7 @@ pub fn distfetch(distfile: Distfile, distdir: &str) {
     println!(" OK");
 }
 
-fn verify(distfile: Distfile, buf: Vec<u8>) {
+fn verify(distfile: &Distfile, buf: Vec<u8>) {
     let b2bytes = distfile.blake2b.len() / 2;
     let mut b2hasher = Blake2bVar::new(b2bytes).expect("couldn't create hasher");
     b2hasher.update(&buf);
@@ -45,7 +45,7 @@ fn verify(distfile: Distfile, buf: Vec<u8>) {
     }
 }
 
-fn fetch_and_verify(distfile: Distfile, distdir: &str) {
+fn fetch_and_verify(distfile: &Distfile, distdir: &str) {
     let response = reqwest::blocking::get(&distfile.uri).expect("couldn't get distfile");
     // Don't parse response.url() for the name here, it might've been changed.
     let name = distfile.name.clone().unwrap_or_else(|| {
