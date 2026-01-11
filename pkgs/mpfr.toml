@@ -1,0 +1,13 @@
+version = "4.2.2"
+build = """
+tar xf mpfr-4.2.2.tar.xz
+cd mpfr-4.2.2
+./configure --prefix=/usr        \
+            --enable-thread-safe
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/mpfr/mpfr-4.2.2.tar.xz"
+blake2b = "3a25a9157c1d7c4555ba8de28c99fa6c9a0eeaa6c17789172426056d83648d45"

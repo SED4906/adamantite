@@ -26,12 +26,23 @@ pub fn build_no_sandbox(package: Package, package_name: &str) {
         .expect("failed to copy distfile");
     }
     std::fs::write("/tmp/build/build", package.build).expect("couldn't write build script");
-    std::process::Command::new("bash")
+    let build_status = std::process::Command::new("bash")
         .args(vec!["-e", "/tmp/build/build"])
         .current_dir("/tmp/build/work")
         .env("PACKAGE_OUT", "/tmp/build/out")
         .status()
         .expect("failed to run bash");
+    if !build_status.success() {
+        panic!("build failed");
+    }
     std::process::Command::new("tar")
-    .args(vec!["cf", &format!("{package_name}-{}.tar", package.version), "-C", "/tmp/build/out", "."]).status().expect("failed to run tar");
+        .args(vec![
+            "cf",
+            &format!("{package_name}_{}.tar", package.version),
+            "-C",
+            "/tmp/build/out",
+            ".",
+        ])
+        .status()
+        .expect("failed to run tar");
 }

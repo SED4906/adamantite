@@ -1,0 +1,20 @@
+version = "6.6-20260103"
+build = """
+tar xf ncurses-6.6-20260103.tgz
+cd ncurses-6.6-20260103
+./configure --prefix=/usr           \
+            --mandir=/usr/share/man \
+            --with-shared           \
+            --without-debug         \
+            --without-normal        \
+            --with-cxx-shared       \
+            --enable-pc-files       \
+            --with-pkg-config-libdir=/usr/lib/pkgconfig
+make
+make DESTDIR=$PACKAGE_OUT install
+ln -sfv libncursesw.so $PACKAGE_OUT/usr/lib/libcurses.so
+"""
+
+[[distfiles]]
+uri = "https://invisible-mirror.net/archives/ncurses/current/ncurses-6.6-20260103.tgz"
+blake2b = "f68a811b01802e786e7c6bd7b5f3d8a901c6a1254f6a1b801900fd8190858446"

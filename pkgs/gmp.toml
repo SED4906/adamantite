@@ -1,0 +1,15 @@
+version = "6.3.0"
+build = """
+tar xf gmp-6.3.0.tar.xz
+cd gmp-6.3.0
+sed -i '/long long t1;/,+1s/()/(...)/' configure
+./configure --prefix=/usr    \
+            --enable-cxx     \
+            --host=none-linux-gnu
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/gmp/gmp-6.3.0.tar.xz"
+blake2b = "d1c27e093699a24a397f8cd32c03fec6f0720280cc6bc5d42408394d39cfefd0"
