@@ -1,4 +1,5 @@
 use reqwest::Url;
+use reqwest::header::USER_AGENT;
 
 use blake2::{
     Blake2bVar,
@@ -46,7 +47,10 @@ fn verify(distfile: &Distfile, buf: Vec<u8>) {
 }
 
 fn fetch_and_verify(distfile: &Distfile, distdir: &str) {
-    let response = reqwest::blocking::get(&distfile.uri).expect("couldn't get distfile");
+    let client = reqwest::blocking::Client::new();
+    let response = client.get(&distfile.uri)
+    .header(USER_AGENT, format!("Adamantite {} (reqwest)",env!("CARGO_PKG_VERSION")))
+    .send().expect("couldn't get distfile");
     // Don't parse response.url() for the name here, it might've been changed.
     let name = distfile.name.clone().unwrap_or_else(|| {
         Url::parse(&distfile.uri).expect("couldn't parse uri")

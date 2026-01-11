@@ -1,0 +1,69 @@
+version = "2.42"
+build = """
+tar xf glibc-2.42.tar.xz
+cd glibc-2.42
+mkdir build
+cd build
+echo "rootsbindir=/usr/sbin" > configparms
+../configure --prefix=/usr                   \
+             --disable-werror                \
+             --disable-nscd                  \
+             libc_cv_slibdir=/usr/lib        \
+             --enable-stack-protector=strong \
+             --enable-kernel=5.4
+make
+mkdir $PACKAGE_OUT/etc
+touch $PACKAGE_OUT/etc/ld.so.conf
+sed '/test-installation/s@$(PERL)@echo not running@' -i ../Makefile
+make DESTDIR=$PACKAGE_OUT install
+sed '/RTLDLIST=/s@/usr@@g' -i $PACKAGE_OUT/usr/bin/ldd
+cat > $PACKAGE_OUT/etc/nsswitch.conf << "EOF"
+# Begin /etc/nsswitch.conf
+
+passwd: files systemd
+group: files systemd
+shadow: files systemd
+
+hosts: mymachines resolve [!UNAVAIL=return] files myhostname dns
+networks: files
+
+protocols: files
+services: files
+ethers: files
+rpc: files
+
+# End /etc/nsswitch.conf
+EOF
+tar xf ../../tzdata2025c.tar.gz
+ZONEINFO=$PACKAGE_OUT/usr/share/zoneinfo
+mkdir -pv $ZONEINFO/{posix,right}
+
+for tz in etcetera southamerica northamerica europe africa antarctica  \
+          asia australasia backward; do
+    zic -L /dev/null   -d $ZONEINFO       ${tz}
+    zic -L /dev/null   -d $ZONEINFO/posix ${tz}
+    zic -L leapseconds -d $ZONEINFO/right ${tz}
+done
+
+cp -v zone.tab zone1970.tab iso3166.tab $ZONEINFO
+zic -d $ZONEINFO -p America/New_York
+unset ZONEINFO tz
+cat > $PACKAGE_OUT/etc/ld.so.conf << "EOF"
+# Begin /etc/ld.so.conf
+/usr/local/lib
+/opt/lib
+
+# Add an include directory
+include /etc/ld.so.conf.d/*.conf
+
+EOF
+mkdir -pv $PACKAGE_OUT/etc/ld.so.conf.d
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/glibc/glibc-2.42.tar.xz"
+blake2b = "f97c8f0416d02606d281bbd9cbe8e275dfa1770193f45db1c2e02bbdbe50301b"
+
+[[distfiles]]
+uri = "https://www.iana.org/time-zones/repository/releases/tzdata2025c.tar.gz"
+blake2b = "a2f5107c9246003ca058bbb09656ccb57ce3977d01a08cde9b5baa5e7af2c9ba"
