@@ -11,6 +11,6 @@ A sandboxed build is used for the specified package and its explicit dependencie
 - `build` Bash script that will be run with `$PACKAGE_OUT` set to the output directory to install files to, and the working directory containing only the `distfiles` to start with.
 - `depends` Optional list of explicit dependencies, as package names.
 - `distfiles` Optional list of tables:
- - `uri` URL to download package from
- - `blake2b` BLAKE2B checksum, allows any length.
- - `name` Optional file name, if the one implied by `uri` is insufficient.
+    - `uri` URL to download package from
+    - `blake2b` BLAKE2B checksum, allows any length.
+    - `name` Optional file name, if the one implied by `uri` is insufficient.
