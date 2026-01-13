@@ -1,0 +1,12 @@
+version = "1.4.20"
+build = """
+tar xf m4-1.4.20.tar.xz
+cd m4-1.4.20
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/m4/m4-1.4.20.tar.xz"
+blake2b = "729ab0b2a6a211351ddd5896c7d971b4fd951a28da9fa8816bbf740ef6e17121"

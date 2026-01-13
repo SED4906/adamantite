@@ -59,6 +59,7 @@ include /etc/ld.so.conf.d/*.conf
 EOF
 mkdir -pv $PACKAGE_OUT/etc/ld.so.conf.d
 """
+depends = ["python", "bison", "m4"]
 
 [[distfiles]]
 uri = "https://ftpmirror.gnu.org/glibc/glibc-2.42.tar.xz"

@@ -1,0 +1,13 @@
+version = "3.14.2"
+build = """
+tar xf Python-3.14.2.tar.xz
+cd Python-3.14.2
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+depends = ["openssl"]
+
+[[distfiles]]
+uri = "https://www.python.org/ftp/python/3.14.2/Python-3.14.2.tar.xz"
+blake2b = "1cef193ff39aa946d2a000808ac8589ef142ec2fea76419d2c51003d35f15948"

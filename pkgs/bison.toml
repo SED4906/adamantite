@@ -1,0 +1,13 @@
+version = "3.8.2"
+build = """
+tar xf bison-3.8.2.tar.xz
+cd bison-3.8.2
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+depends = ["m4"]
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/bison/bison-3.8.2.tar.xz"
+blake2b = "c4448708c9c931476238ec2006f61b74265fe114e8a2106dfdc14f612aab3f0f"
