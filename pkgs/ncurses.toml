@@ -9,10 +9,12 @@ cd ncurses-6.6-20260103
             --without-normal        \
             --with-cxx-shared       \
             --enable-pc-files       \
+            --with-versioned-syms   \
             --with-pkg-config-libdir=/usr/lib/pkgconfig
 make
 make DESTDIR=$PACKAGE_OUT install
 ln -sfv libncursesw.so $PACKAGE_OUT/usr/lib/libcurses.so
+ln -sfv libformw.so $PACKAGE_OUT/usr/lib/libform.so
 """
 
 [[distfiles]]

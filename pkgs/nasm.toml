@@ -4,7 +4,9 @@ tar xf nasm-3.01.tar.xz
 cd nasm-3.01
 ./configure --prefix=/usr
 make
-make DESTDIR=$PACKAGE_OUT install
+mkdir -p $PACKAGE_OUT/usr/bin
+cp nasm $PACKAGE_OUT/usr/bin
+cp ndisasm $PACKAGE_OUT/usr/bin
 """
 
 [[distfiles]]

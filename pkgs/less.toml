@@ -1,0 +1,12 @@
+version = "679"
+build = """
+tar xf less-679.tar.gz
+cd less-679
+./configure --prefix=/usr --sysconfdir=/etc
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://www.greenwoodsoftware.com/less/less-679.tar.gz"
+blake2b = "9dd64a3f91c612ff3bb10732791d0d36a1fb1017ba87a3c48dc596be9492e576"

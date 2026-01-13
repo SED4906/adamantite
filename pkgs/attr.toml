@@ -1,0 +1,13 @@
+version = "2.5.2"
+build = """
+tar xf attr-2.5.2.tar.gz
+cd attr-2.5.2
+./configure --prefix=/usr     \
+            --sysconfdir=/etc
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://download.savannah.gnu.org/releases/attr/attr-2.5.2.tar.gz"
+blake2b = "15289ac06d83c751ff1730794c3af2a3abe42c494dfc3637db86b2a60ed82485"

@@ -42,7 +42,7 @@ def fetch_and_verify(distfile, distdir):
     with open(f"{distdir}/{name}", 'wb') as f:
         f.write(buf)
 
-def build_no_sandbox(package, package_name):
+def prepare_build_directory(package, package_name):
     shutil.rmtree(f"/tmp/build/{package_name}", ignore_errors=True)
     os.makedirs(f"/tmp/build/{package_name}")
     os.makedirs(f"/tmp/build/{package_name}/work")
@@ -53,19 +53,88 @@ def build_no_sandbox(package, package_name):
             shutil.copy(f"/tmp/distfiles/{name}", f"/tmp/build/{package_name}/work")
     with open(f"/tmp/build/{package_name}/build", 'w') as f:
         print(package['build'], file=f)
+    os.chmod(f"/tmp/build/{package_name}/build", 0o777)
+
+def build_no_sandbox(package, package_name):
+    prepare_build_directory(package, package_name)
     build_env = dict(os.environ)
     build_env["PACKAGE_OUT"] = f"/tmp/build/{package_name}/out"
     subprocess.run(["bash", "-e", f"/tmp/build/{package_name}/build"], cwd=f"/tmp/build/{package_name}/work", env=build_env, check=True)
     subprocess.run(["tar", "cf", f"{package_name}_{package['version']}.tar", "-C", f"/tmp/build/{package_name}/out", "."], check=True)
 
-def main():
-    package_name = sys.argv[1]
+def explicit_dependency(package_name, depend_name):
+    depend = tomllib.load(open(f"{depend_name}.toml", 'rb'))
+    if not os.path.isfile(f"{depend_name}_{depend['version']}.tar"):
+        main(depend_name)
+    subprocess.run(["tar", "xf", f"{depend_name}_{depend['version']}.tar", "-C", f"/tmp/build/{package_name}"], check=True)
+
+def implied_dependency(package_name, depend_name):
+    depend = tomllib.load(open(f"{depend_name}.toml", 'rb'))
+    if not os.path.isfile(f"{depend_name}_{depend['version']}.tar"):
+        if 'distfiles' in depend:
+            os.makedirs("/tmp/distfiles", exist_ok=True)
+            for distfile in depend['distfiles']:
+                distfetch(distfile)
+        build_no_sandbox(depend, depend_name)
+    subprocess.run(["tar", "xf", f"{depend_name}_{depend['version']}.tar", "-C", f"/tmp/build/{package_name}"], check=True)
+
+def build_sandboxed(package, package_name):
+    prepare_build_directory(package, package_name)
+    os.makedirs(f"/tmp/build/{package_name}/usr/bin")
+    os.symlink("bin",f"/tmp/build/{package_name}/usr/sbin")
+    os.symlink("usr/bin",f"/tmp/build/{package_name}/bin")
+    os.symlink("bin",f"/tmp/build/{package_name}/sbin")
+    os.symlink("usr/lib",f"/tmp/build/{package_name}/lib")
+    os.symlink("lib",f"/tmp/build/{package_name}/usr/lib64")
+    os.symlink("lib",f"/tmp/build/{package_name}/lib64")
+    os.makedirs(f"/tmp/build/{package_name}/proc")
+    os.makedirs(f"/tmp/build/{package_name}/dev")
+    os.makedirs(f"/tmp/build/{package_name}/sys")
+    os.makedirs(f"/tmp/build/{package_name}/tmp")
+    os.makedirs(f"/tmp/build/{package_name}/run")
+    implied_dependency(package_name, 'linux-headers')
+    implied_dependency(package_name, 'glibc')
+    implied_dependency(package_name, 'ncurses')
+    implied_dependency(package_name, 'acl')
+    implied_dependency(package_name, 'attr')
+    implied_dependency(package_name, 'libcap')
+    implied_dependency(package_name, 'readline')
+    implied_dependency(package_name, 'zlib')
+    implied_dependency(package_name, 'openssl')
+    implied_dependency(package_name, 'bash')
+    implied_dependency(package_name, 'gmp')
+    implied_dependency(package_name, 'mpfr')
+    implied_dependency(package_name, 'mpc')
+    implied_dependency(package_name, 'gcc')
+    implied_dependency(package_name, 'patch')
+    implied_dependency(package_name, 'sed')
+    implied_dependency(package_name, 'gawk')
+    implied_dependency(package_name, 'grep')
+    implied_dependency(package_name, 'gzip')
+    implied_dependency(package_name, 'bzip2')
+    implied_dependency(package_name, 'xz')
+    implied_dependency(package_name, 'zstd')
+    implied_dependency(package_name, 'tar')
+    implied_dependency(package_name, 'make')
+    implied_dependency(package_name, 'binutils')
+    implied_dependency(package_name, 'coreutils')
+    implied_dependency(package_name, 'diffutils')
+    implied_dependency(package_name, 'findutils')
+    implied_dependency(package_name, 'flex')
+    os.symlink("bash", f"/tmp/build/{package_name}/usr/bin/sh")
+    if 'depends' in package:
+        for depend_name in package['depends']:
+            explicit_dependency(package_name, depend_name)
+    subprocess.run(["sudo", "arch-chroot", f"/tmp/build/{package_name}", "/bin/bash", "-e", "-c", f"cd /work;PACKAGE_OUT=/out /build"], check=True)
+    subprocess.run(["tar", "cf", f"{package_name}_{package['version']}.tar", "-C", f"/tmp/build/{package_name}/out", "."], check=True)
+
+def main(package_name):
     package = tomllib.load(open(f"{package_name}.toml", 'rb'))
     if 'distfiles' in package:
         os.makedirs("/tmp/distfiles", exist_ok=True)
         for distfile in package['distfiles']:
             distfetch(distfile)
-    build_no_sandbox(package, package_name)
+    build_sandboxed(package, package_name)
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1])

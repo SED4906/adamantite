@@ -3,7 +3,7 @@ build = """
 tar xf grep-3.12.tar.xz
 cd grep-3.12
 sed -i "s/echo/#echo/" src/egrep.sh
-./configure --prefix=/usr
+./configure --prefix=/usr --disable-perl-regexp
 make
 make DESTDIR=$PACKAGE_OUT install
 """

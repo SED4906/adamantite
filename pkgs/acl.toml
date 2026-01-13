@@ -1,0 +1,12 @@
+version = "2.3.2"
+build = """
+tar xf acl-2.3.2.tar.xz
+cd acl-2.3.2
+./configure --prefix=/usr
+make
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://download.savannah.gnu.org/releases/acl/acl-2.3.2.tar.xz"
+blake2b = "df92061899fb74e0881e29acf04a2696d3ea8574728cf05da65fa61d01cf5d95"

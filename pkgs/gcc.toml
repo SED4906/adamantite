@@ -18,9 +18,11 @@ cd build
              --enable-host-pie        \
              --disable-bootstrap      \
              --disable-fixincludes    \
-             --with-system-zlib
+             --with-system-zlib       \
+             --without-isl
 make
 make DESTDIR=$PACKAGE_OUT install
+ln -s gcc $PACKAGE_OUT/usr/bin/cc
 """
 
 [[distfiles]]

@@ -1,0 +1,14 @@
+version = "8.3"
+build = """
+tar xf readline-8.3.tar.gz
+cd readline-8.3
+sed -i 's/-Wl,-rpath,[^ ]*//' support/shobj-conf
+./configure --prefix=/usr    \
+            --with-curses
+make SHLIB_LIBS="-lncursesw"
+make DESTDIR=$PACKAGE_OUT install
+"""
+
+[[distfiles]]
+uri = "https://ftpmirror.gnu.org/readline/readline-8.3.tar.gz"
+blake2b = "c446a1d0c38a582d473f5bcb7f23d30f2e8e5efd691b31858fe465609c07061c"

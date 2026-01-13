@@ -12,10 +12,12 @@ sed -i '/"lib64"/s/64//' Modules/GNUInstallDirs.cmake &&
             --no-system-libarchive \
             --no-system-libuv \
             --no-system-nghttp2 \
-            --no-system-librhash
+            --no-system-librhash \
+            --no-system-expat
 make
 make DESTDIR=$PACKAGE_OUT install
 """
+depends = ["openssl"]
 
 [[distfiles]]
 uri = "https://github.com/Kitware/CMake/releases/download/v4.2.1/cmake-4.2.1.tar.gz"

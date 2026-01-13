@@ -1,0 +1,11 @@
+version = "2.76"
+build = """
+tar xf libcap-2.76.tar.xz
+cd libcap-2.76
+make prefix=/usr lib=lib
+make DESTDIR=$PACKAGE_OUT prefix=/usr lib=lib install
+"""
+
+[[distfiles]]
+uri = "https://www.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.76.tar.xz"
+blake2b = "de81beca7d15181a89d891c70270aa2721dcc38121126755c1b5942ee499899e"

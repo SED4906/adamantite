@@ -1,0 +1,14 @@
+version = "6.18.4"
+build = """
+tar xf linux-6.18.4.tar.xz
+cd linux-6.18.4
+make mrproper
+make headers
+find usr/include -type f ! -name '*.h' -delete
+mkdir $PACKAGE_OUT/usr
+cp -rv usr/include $PACKAGE_OUT/usr
+"""
+
+[[distfiles]]
+uri = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.4.tar.xz"
+blake2b = "23f2ee36474d74a3825e5210af4460faafdfd3d2c80e44800bceff47d1331038"
