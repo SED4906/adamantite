@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 class ChecksumError(Exception):
     pass
 
-def distfetch(distfile, distdir="/tmp/distfiles"):
+def distfetch(distfile, distdir="/var/tmp/distfiles"):
     print(f"distfile {distfile['uri']}", end='')
     name = distfile['name'] if 'name' in distfile else urlparse(distfile['uri']).path.rsplit('/',1)[1]
     print(f" -> {name}", end='')
@@ -43,55 +43,55 @@ def fetch_and_verify(distfile, distdir):
         f.write(buf)
 
 def prepare_build_directory(package, package_name):
-    shutil.rmtree(f"/tmp/build/{package_name}", ignore_errors=True)
-    os.makedirs(f"/tmp/build/{package_name}")
-    os.makedirs(f"/tmp/build/{package_name}/work")
-    os.makedirs(f"/tmp/build/{package_name}/out")
+    shutil.rmtree(f"/var/tmp/build/{package_name}", ignore_errors=True)
+    os.makedirs(f"/var/tmp/build/{package_name}")
+    os.makedirs(f"/var/tmp/build/{package_name}/work")
+    os.makedirs(f"/var/tmp/build/{package_name}/out")
     if 'distfiles' in package:
         for distfile in package['distfiles']:
             name = distfile['name'] if 'name' in distfile else urlparse(distfile['uri']).path.rsplit('/',1)[1]
-            shutil.copy(f"/tmp/distfiles/{name}", f"/tmp/build/{package_name}/work")
-    with open(f"/tmp/build/{package_name}/build", 'w') as f:
+            shutil.copy(f"/var/tmp/distfiles/{name}", f"/var/tmp/build/{package_name}/work")
+    with open(f"/var/tmp/build/{package_name}/build", 'w') as f:
         print(package['build'], file=f)
-    os.chmod(f"/tmp/build/{package_name}/build", 0o777)
+    os.chmod(f"/var/tmp/build/{package_name}/build", 0o777)
 
 def build_no_sandbox(package, package_name):
     prepare_build_directory(package, package_name)
     build_env = dict(os.environ)
-    build_env["PACKAGE_OUT"] = f"/tmp/build/{package_name}/out"
-    subprocess.run(["bash", "-e", f"/tmp/build/{package_name}/build"], cwd=f"/tmp/build/{package_name}/work", env=build_env, check=True)
-    subprocess.run(["tar", "caf", f"{package_name}_{package['version']}.tar.zst", "-C", f"/tmp/build/{package_name}/out", "."], check=True)
+    build_env["PACKAGE_OUT"] = f"/var/tmp/build/{package_name}/out"
+    subprocess.run(["bash", "-e", f"/var/tmp/build/{package_name}/build"], cwd=f"/var/tmp/build/{package_name}/work", env=build_env, check=True)
+    subprocess.run(["tar", "caf", f"{package_name}_{package['version']}.tar.zst", "-C", f"/var/tmp/build/{package_name}/out", "."], check=True)
 
 def explicit_dependency(package_name, depend_name):
     depend = tomllib.load(open(f"{depend_name}.toml", 'rb'))
     if not os.path.isfile(f"{depend_name}_{depend['version']}.tar.zst"):
         main(depend_name)
-    subprocess.run(["tar", "xf", f"{depend_name}_{depend['version']}.tar.zst", "-C", f"/tmp/build/{package_name}", "--keep-directory-symlink"], check=True)
+    subprocess.run(["tar", "xf", f"{depend_name}_{depend['version']}.tar.zst", "-C", f"/var/tmp/build/{package_name}", "--keep-directory-symlink"], check=True)
 
 def implied_dependency(package_name, depend_name):
     depend = tomllib.load(open(f"{depend_name}.toml", 'rb'))
     if not os.path.isfile(f"{depend_name}_{depend['version']}.tar.zst"):
         if 'distfiles' in depend:
-            os.makedirs("/tmp/distfiles", exist_ok=True)
+            os.makedirs("/var/tmp/distfiles", exist_ok=True)
             for distfile in depend['distfiles']:
                 distfetch(distfile)
         build_no_sandbox(depend, depend_name)
-    subprocess.run(["tar", "xf", f"{depend_name}_{depend['version']}.tar.zst", "-C", f"/tmp/build/{package_name}", "--keep-directory-symlink"], check=True)
+    subprocess.run(["tar", "xf", f"{depend_name}_{depend['version']}.tar.zst", "-C", f"/var/tmp/build/{package_name}", "--keep-directory-symlink"], check=True)
 
 def build_sandboxed(package, package_name):
     prepare_build_directory(package, package_name)
-    os.makedirs(f"/tmp/build/{package_name}/usr/bin")
-    os.symlink("bin",f"/tmp/build/{package_name}/usr/sbin")
-    os.symlink("usr/bin",f"/tmp/build/{package_name}/bin")
-    os.symlink("bin",f"/tmp/build/{package_name}/sbin")
-    os.symlink("usr/lib",f"/tmp/build/{package_name}/lib")
-    os.symlink("lib",f"/tmp/build/{package_name}/usr/lib64")
-    os.symlink("lib",f"/tmp/build/{package_name}/lib64")
-    os.makedirs(f"/tmp/build/{package_name}/proc")
-    os.makedirs(f"/tmp/build/{package_name}/dev")
-    os.makedirs(f"/tmp/build/{package_name}/sys")
-    os.makedirs(f"/tmp/build/{package_name}/tmp")
-    os.makedirs(f"/tmp/build/{package_name}/run")
+    os.makedirs(f"/var/tmp/build/{package_name}/usr/bin")
+    os.symlink("bin",f"/var/tmp/build/{package_name}/usr/sbin")
+    os.symlink("usr/bin",f"/var/tmp/build/{package_name}/bin")
+    os.symlink("bin",f"/var/tmp/build/{package_name}/sbin")
+    os.symlink("usr/lib",f"/var/tmp/build/{package_name}/lib")
+    os.symlink("lib",f"/var/tmp/build/{package_name}/usr/lib64")
+    os.symlink("lib",f"/var/tmp/build/{package_name}/lib64")
+    os.makedirs(f"/var/tmp/build/{package_name}/proc")
+    os.makedirs(f"/var/tmp/build/{package_name}/dev")
+    os.makedirs(f"/var/tmp/build/{package_name}/sys")
+    os.makedirs(f"/var/tmp/build/{package_name}/tmp")
+    os.makedirs(f"/var/tmp/build/{package_name}/run")
     implied_dependency(package_name, 'linux-headers')
     implied_dependency(package_name, 'glibc')
     implied_dependency(package_name, 'ncurses')
@@ -124,13 +124,13 @@ def build_sandboxed(package, package_name):
     if 'depends' in package:
         for depend_name in package['depends']:
             explicit_dependency(package_name, depend_name)
-    subprocess.run(["sudo", "arch-chroot", f"/tmp/build/{package_name}", "/bin/bash", "-e", "-c", "cd /work;PACKAGE_OUT=/out /build"], check=True)
-    subprocess.run(["tar", "caf", f"{package_name}_{package['version']}.tar.zst", "-C", f"/tmp/build/{package_name}/out", "."], check=True)
+    subprocess.run(["sudo", "arch-chroot", f"/var/tmp/build/{package_name}", "/bin/bash", "-e", "-c", "cd /work;PACKAGE_OUT=/out /build"], check=True)
+    subprocess.run(["tar", "caf", f"{package_name}_{package['version']}.tar.zst", "-C", f"/var/tmp/build/{package_name}/out", "."], check=True)
 
 def main(package_name):
     package = tomllib.load(open(f"{package_name}.toml", 'rb'))
     if 'distfiles' in package:
-        os.makedirs("/tmp/distfiles", exist_ok=True)
+        os.makedirs("/var/tmp/distfiles", exist_ok=True)
         for distfile in package['distfiles']:
             distfetch(distfile)
     build_sandboxed(package, package_name)
