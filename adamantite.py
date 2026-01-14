@@ -60,23 +60,23 @@ def build_no_sandbox(package, package_name):
     build_env = dict(os.environ)
     build_env["PACKAGE_OUT"] = f"/tmp/build/{package_name}/out"
     subprocess.run(["bash", "-e", f"/tmp/build/{package_name}/build"], cwd=f"/tmp/build/{package_name}/work", env=build_env, check=True)
-    subprocess.run(["tar", "cf", f"{package_name}_{package['version']}.tar", "-C", f"/tmp/build/{package_name}/out", "."], check=True)
+    subprocess.run(["tar", "caf", f"{package_name}_{package['version']}.tar.zst", "-C", f"/tmp/build/{package_name}/out", "."], check=True)
 
 def explicit_dependency(package_name, depend_name):
     depend = tomllib.load(open(f"{depend_name}.toml", 'rb'))
-    if not os.path.isfile(f"{depend_name}_{depend['version']}.tar"):
+    if not os.path.isfile(f"{depend_name}_{depend['version']}.tar.zst"):
         main(depend_name)
-    subprocess.run(["tar", "xf", f"{depend_name}_{depend['version']}.tar", "-C", f"/tmp/build/{package_name}", "--keep-directory-symlink"], check=True)
+    subprocess.run(["tar", "xf", f"{depend_name}_{depend['version']}.tar.zst", "-C", f"/tmp/build/{package_name}", "--keep-directory-symlink"], check=True)
 
 def implied_dependency(package_name, depend_name):
     depend = tomllib.load(open(f"{depend_name}.toml", 'rb'))
-    if not os.path.isfile(f"{depend_name}_{depend['version']}.tar"):
+    if not os.path.isfile(f"{depend_name}_{depend['version']}.tar.zst"):
         if 'distfiles' in depend:
             os.makedirs("/tmp/distfiles", exist_ok=True)
             for distfile in depend['distfiles']:
                 distfetch(distfile)
         build_no_sandbox(depend, depend_name)
-    subprocess.run(["tar", "xf", f"{depend_name}_{depend['version']}.tar", "-C", f"/tmp/build/{package_name}", "--keep-directory-symlink"], check=True)
+    subprocess.run(["tar", "xf", f"{depend_name}_{depend['version']}.tar.zst", "-C", f"/tmp/build/{package_name}", "--keep-directory-symlink"], check=True)
 
 def build_sandboxed(package, package_name):
     prepare_build_directory(package, package_name)
@@ -125,7 +125,7 @@ def build_sandboxed(package, package_name):
         for depend_name in package['depends']:
             explicit_dependency(package_name, depend_name)
     subprocess.run(["sudo", "arch-chroot", f"/tmp/build/{package_name}", "/bin/bash", "-e", "-c", f"cd /work;PACKAGE_OUT=/out /build"], check=True)
-    subprocess.run(["tar", "cf", f"{package_name}_{package['version']}.tar", "-C", f"/tmp/build/{package_name}/out", "."], check=True)
+    subprocess.run(["tar", "caf", f"{package_name}_{package['version']}.tar.zst", "-C", f"/tmp/build/{package_name}/out", "."], check=True)
 
 def main(package_name):
     package = tomllib.load(open(f"{package_name}.toml", 'rb'))
