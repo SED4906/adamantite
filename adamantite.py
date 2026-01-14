@@ -124,7 +124,7 @@ def build_sandboxed(package, package_name):
     if 'depends' in package:
         for depend_name in package['depends']:
             explicit_dependency(package_name, depend_name)
-    subprocess.run(["sudo", "arch-chroot", f"/tmp/build/{package_name}", "/bin/bash", "-e", "-c", f"cd /work;PACKAGE_OUT=/out /build"], check=True)
+    subprocess.run(["sudo", "arch-chroot", f"/tmp/build/{package_name}", "/bin/bash", "-e", "-c", "cd /work;PACKAGE_OUT=/out /build"], check=True)
     subprocess.run(["tar", "caf", f"{package_name}_{package['version']}.tar.zst", "-C", f"/tmp/build/{package_name}/out", "."], check=True)
 
 def main(package_name):
