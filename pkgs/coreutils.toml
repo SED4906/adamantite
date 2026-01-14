@@ -2,7 +2,7 @@ version = "9.9"
 build = """
 tar xf coreutils-9.9.tar.xz
 cd coreutils-9.9
-./configure --prefix=/usr
+FORCE_UNSAFE_CONFIGURE=1 ./configure --prefix=/usr
 make
 make DESTDIR=$PACKAGE_OUT install
 """

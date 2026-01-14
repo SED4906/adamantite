@@ -121,7 +121,6 @@ def build_sandboxed(package, package_name):
     implied_dependency(package_name, 'diffutils')
     implied_dependency(package_name, 'findutils')
     implied_dependency(package_name, 'flex')
-    os.symlink("bash", f"/tmp/build/{package_name}/usr/bin/sh")
     if 'depends' in package:
         for depend_name in package['depends']:
             explicit_dependency(package_name, depend_name)

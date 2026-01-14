@@ -18,6 +18,7 @@ cd build
              --enable-host-pie        \
              --disable-bootstrap      \
              --disable-fixincludes    \
+             --disable-multilib       \
              --with-system-zlib       \
              --without-isl
 make

@@ -6,6 +6,7 @@ for P in `seq 1 9`; do patch -p0 <../bash53-00$P; done
 ./configure --prefix=/usr --without-bash-malloc
 make
 make DESTDIR=$PACKAGE_OUT install
+ln -sv bash $PACKAGE_OUT/usr/bin/sh
 """
 
 [[distfiles]]
